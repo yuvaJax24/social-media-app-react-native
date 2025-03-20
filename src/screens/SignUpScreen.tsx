@@ -7,21 +7,45 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { StackParamList } from "../types";
 import { useTheme } from "react-native-paper";
+import { StackParamList } from "../types";
+import { supabase } from "../config/Supabase.config";
 
 type SignupScreenNavigationProp = StackScreenProps<StackParamList, "Signup">;
 
 const SignupScreen: React.FC<SignupScreenNavigationProp> = ({ navigation }) => {
   const { colors } = useTheme(); // Get theme colors]
-  const [signUpdetail, setSignUpDetail] = useState({
-    name: "",
+  const [signupDetail, setSignupDetail] = useState({
     email: "",
     password: "",
+    display_name: "",
   });
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleSignup = async () => {};
+  const handleSignup = async () => {
+    const { data, error } = await supabase.auth.signUp(signupDetail);
+
+    if (error) {
+      setMessage(error.message);
+    }
+
+    if (data?.user) {
+      const { error: profileError } = await supabase.from("profiles").insert([
+        {
+          id: data?.user?.id,
+          display_name: signupDetail?.display_name,
+          email: signupDetail?.email,
+        },
+      ]);
+
+      if (profileError) {
+        console.error("Profile Save Error:", profileError.message);
+        setMessage(profileError.message);
+      } else {
+        navigation.navigate("Login");
+      }
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -29,12 +53,14 @@ const SignupScreen: React.FC<SignupScreenNavigationProp> = ({ navigation }) => {
         Create Account
       </Text>
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {message ? <Text style={styles.error}>{message}</Text> : null}
 
       <TextInput
         placeholder="name"
-        value={signUpdetail?.name}
-        onChangeText={(name) => setSignUpDetail({ ...signUpdetail, name })}
+        value={signupDetail?.display_name}
+        onChangeText={(display_name) =>
+          setSignupDetail({ ...signupDetail, display_name })
+        }
         style={[
           styles.input,
           { color: colors.onBackground, borderColor: colors.primary },
@@ -42,8 +68,8 @@ const SignupScreen: React.FC<SignupScreenNavigationProp> = ({ navigation }) => {
       />
       <TextInput
         placeholder="Email"
-        value={signUpdetail?.email}
-        onChangeText={(email) => setSignUpDetail({ ...signUpdetail, email })}
+        value={signupDetail?.email}
+        onChangeText={(email) => setSignupDetail({ ...signupDetail, email })}
         style={[
           styles.input,
           { color: colors.onBackground, borderColor: colors.primary },
@@ -51,9 +77,9 @@ const SignupScreen: React.FC<SignupScreenNavigationProp> = ({ navigation }) => {
       />
       <TextInput
         placeholder="Password"
-        value={signUpdetail?.password}
+        value={signupDetail?.password}
         onChangeText={(password) =>
-          setSignUpDetail({ ...signUpdetail, password })
+          setSignupDetail({ ...signupDetail, password })
         }
         secureTextEntry
         style={[
@@ -66,7 +92,9 @@ const SignupScreen: React.FC<SignupScreenNavigationProp> = ({ navigation }) => {
         onPress={handleSignup}
         style={styles.button}
         disabled={
-          !signUpdetail?.name || !signUpdetail?.email || !signUpdetail?.password
+          !signupDetail?.display_name ||
+          !signupDetail?.email ||
+          !signupDetail?.password
         }
       >
         <Text style={styles.buttonText}>Sign Up</Text>

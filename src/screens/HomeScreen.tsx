@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import Header from "../components/Header";
@@ -13,6 +13,8 @@ import {
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { CompositeNavigationProp } from "@react-navigation/native";
+import { supabase } from "../config/Supabase.config";
+import { getLoginUserData } from "../store/user.store";
 
 type HomeScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList, "Home">,
@@ -59,6 +61,8 @@ const postsData: PostType[] = [
 ];
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
+  const [user, setUser] = useState({});
+
   const handleStoryPress = (story: Story) => {
     console.log("Story pressed:", story.username);
     // Navigate to story view screen (to be implemented)
@@ -70,6 +74,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     // navigation.navigate("Profile");
     navigation.navigate("IndividualProfile", { userId: 123 });
   };
+
+  useEffect(() => {
+    const loginUserDetail = getLoginUserData();
+
+    const checkSession = async () => {
+      const user = JSON.parse((await loginUserDetail) || "") || null;
+      if (!user) {
+        navigation.replace("Login"); // Redirect to login if no user
+      } else {
+        setUser(user);
+      }
+    };
+
+    checkSession();
+  }, []);
 
   return (
     <SafeAreaWrapper>

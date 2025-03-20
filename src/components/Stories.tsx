@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { useTheme } from "react-native-paper";
 import { Story } from "../types";
 
 // Mock data for stories
@@ -25,12 +26,16 @@ interface StoryItemProps {
 }
 
 const StoryItem: React.FC<StoryItemProps> = ({ username, isYou, onPress }) => {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity style={styles.storyItem} onPress={onPress}>
       <View style={[styles.storyRing, isYou && styles.yourStoryRing]}>
         <View style={styles.storyImage} />
       </View>
-      <Text numberOfLines={1} style={styles.username}>
+      <Text
+        numberOfLines={1}
+        style={[styles.username, { color: colors.onBackground }]}
+      >
         {username}
       </Text>
     </TouchableOpacity>
@@ -46,8 +51,9 @@ const Stories: React.FC<StoriesProps> = ({
   stories = storiesData,
   onStoryPress,
 }) => {
+  const { colors } = useTheme();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -68,8 +74,8 @@ const Stories: React.FC<StoriesProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#CDCDCD",
+    // borderBottomWidth: 0.5,
+    // borderBottomColor: "#CDCDCD",
   },
   storiesContainer: {
     paddingVertical: 10,

@@ -93,7 +93,9 @@ const CameraScreen: React.FC<Props> = () => {
               style={styles.captureButton}
               onPress={takePicture}
             >
-              <View style={styles.captureInner} />
+              <View style={styles.captureOuter}>
+                <View style={styles.captureInner} />
+              </View>
             </TouchableOpacity>
             <View style={styles.flipButton} />
           </View>
@@ -144,11 +146,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  captureInner: {
-    width: 50,
-    height: 50,
+  captureOuter: {
+    width: 65,
+    height: 65,
     backgroundColor: "black",
-    borderRadius: 25,
+    borderRadius: 35,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  captureInner: {
+    width: 62,
+    height: 62,
+    backgroundColor: "white",
+    borderRadius: 35,
   },
   noAccessText: {
     color: "white",

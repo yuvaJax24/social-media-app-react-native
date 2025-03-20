@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "react-native-paper";
 import HomeScreen from "../screens/HomeScreen";
 import ExploreScreen from "../screens/ExploreScreen";
 import CameraScreen from "../screens/CameraScreen";
@@ -11,6 +12,7 @@ import { TabParamList } from "../types";
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const TabNavigator: React.FC = () => {
+  const { colors } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -56,12 +58,13 @@ const TabNavigator: React.FC = () => {
             <Ionicons name={iconName as any} size={iconSize} color={color} />
           ) : null;
         },
-        tabBarActiveTintColor: "black",
+        tabBarActiveTintColor: colors.onBackground,
         tabBarInactiveTintColor: "gray",
         tabBarShowLabel: false,
         tabBarStyle: {
           borderTopWidth: 0.5,
-          borderTopColor: "#CDCDCD",
+          borderTopColor: colors.background,
+          backgroundColor: colors.background,
         },
         headerShown: false,
       })}

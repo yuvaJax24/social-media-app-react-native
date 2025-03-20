@@ -9,19 +9,30 @@ import {
 import { StackScreenProps } from "@react-navigation/stack";
 import { useTheme } from "react-native-paper";
 import { StackParamList } from "../types";
+import { supabase } from "../config/Supabase.config";
+import { storeLoginUserData } from "../store/user.store";
 
 type LoginScreenNavigationProp = StackScreenProps<StackParamList, "Login">;
 
 const LoginScreen: React.FC<LoginScreenNavigationProp> = ({ navigation }) => {
   const { colors } = useTheme(); // Get theme colors]
-  const [logIndetail, setLogIndetail] = useState({
+  const [loginDetail, setLoginDetail] = useState({
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleLogin = async () => {
-    navigation.navigate("Home");
+    const { error, data } = await supabase.auth.signInWithPassword(loginDetail);
+    if (error) {
+      console.log("Login error::", error?.message);
+      setMessage(error.message);
+    }
+    if (data?.user) {
+      navigation.navigate("Home");
+      storeLoginUserData(JSON.stringify(data.user));
+      setMessage("Logged in successfully!");
+    }
   };
 
   return (
@@ -30,14 +41,14 @@ const LoginScreen: React.FC<LoginScreenNavigationProp> = ({ navigation }) => {
         Instagram Login
       </Text>
 
-      {error ? (
-        <Text style={[styles.error, { color: "red" }]}>{error}</Text>
+      {message ? (
+        <Text style={[styles.error, { color: "red" }]}>{message}</Text>
       ) : null}
 
       <TextInput
         placeholder="Email"
-        value={logIndetail?.email}
-        onChangeText={(email) => setLogIndetail({ ...logIndetail, email })}
+        value={loginDetail?.email}
+        onChangeText={(email) => setLoginDetail({ ...loginDetail, email })}
         style={[
           styles.input,
           { color: colors.onBackground, borderColor: colors.primary },
@@ -46,9 +57,9 @@ const LoginScreen: React.FC<LoginScreenNavigationProp> = ({ navigation }) => {
 
       <TextInput
         placeholder="Password"
-        value={logIndetail?.password}
+        value={loginDetail?.password}
         onChangeText={(password) =>
-          setLogIndetail({ ...logIndetail, password })
+          setLoginDetail({ ...loginDetail, password })
         }
         secureTextEntry
         style={[
@@ -60,7 +71,7 @@ const LoginScreen: React.FC<LoginScreenNavigationProp> = ({ navigation }) => {
       <TouchableOpacity
         onPress={handleLogin}
         style={[styles.button, { backgroundColor: colors.primary }]}
-        disabled={!logIndetail?.email || !logIndetail?.password}
+        disabled={!loginDetail?.email || !loginDetail?.password}
       >
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>

@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  TextInput,
-  FlatList,
-} from "react-native";
+import { View, StyleSheet, TextInput, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { useTheme } from "react-native-paper";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import { TabParamList } from "../types";
 
@@ -30,6 +25,7 @@ const exploreData: ExploreItem[] = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const ExploreScreen: React.FC<Props> = () => {
+  const { colors } = useTheme();
   const renderGridItem = ({
     item,
     index,
@@ -45,16 +41,16 @@ const ExploreScreen: React.FC<Props> = () => {
   return (
     <SafeAreaWrapper>
       <View style={styles.searchBarContainer}>
-        <View style={styles.searchBar}>
+        <View style={[styles.searchBar]}>
           <Ionicons
             name="search"
             size={18}
-            color="gray"
+            color={colors.onBackground}
             style={styles.searchIcon}
           />
           <TextInput
             placeholder="Search"
-            placeholderTextColor="gray"
+            placeholderTextColor={colors.onBackground}
             style={styles.searchInput}
           />
         </View>
@@ -74,16 +70,16 @@ const ExploreScreen: React.FC<Props> = () => {
 const styles = StyleSheet.create({
   searchBarContainer: {
     padding: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#CDCDCD",
   },
   searchBar: {
     flexDirection: "row",
-    backgroundColor: "#EFEFEF",
-    borderRadius: 12,
+    backgroundColor: "gray",
+    borderRadius: 10,
     alignItems: "center",
     paddingLeft: 10,
     paddingRight: 10,
+    paddingVertical: 8,
+    opacity: 0.3,
   },
   searchIcon: {
     marginRight: 6,

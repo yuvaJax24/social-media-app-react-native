@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "react-native-paper";
 import { Post as PostType } from "../types";
 
 interface PostProps {
@@ -18,6 +19,7 @@ const Post: React.FC<PostProps> = ({
   onSharePress,
   onProfilePress,
 }) => {
+  const { colors } = useTheme();
   const [liked, setLiked] = useState(false);
 
   const handleLikePress = () => {
@@ -26,7 +28,7 @@ const Post: React.FC<PostProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Post Header */}
       <View style={styles.postHeader}>
         <TouchableOpacity
@@ -34,10 +36,16 @@ const Post: React.FC<PostProps> = ({
           onPress={() => onProfilePress && onProfilePress(post.username)}
         >
           <View style={styles.userAvatar} />
-          <Text style={styles.username}>{post.username}</Text>
+          <Text style={[styles.username, { color: colors.onBackground }]}>
+            {post.username}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          <Ionicons name="ellipsis-vertical" size={20} color="black" />
+          <Ionicons
+            name="ellipsis-vertical"
+            size={20}
+            color={colors.onBackground}
+          />
         </TouchableOpacity>
       </View>
 
@@ -56,37 +64,49 @@ const Post: React.FC<PostProps> = ({
             <Ionicons
               name={liked ? "heart" : "heart-outline"}
               size={24}
-              color={liked ? "red" : "black"}
+              color={liked ? "red" : colors.onBackground}
             />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => onCommentPress && onCommentPress(post)}
           >
-            <Ionicons name="chatbubble-outline" size={22} color="black" />
+            <Ionicons
+              name="chatbubble-outline"
+              size={22}
+              color={colors.onBackground}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => onSharePress && onSharePress(post)}
           >
-            <Ionicons name="paper-plane-outline" size={22} color="black" />
+            <Ionicons
+              name="paper-plane-outline"
+              size={22}
+              color={colors.onBackground}
+            />
           </TouchableOpacity>
         </View>
         <TouchableOpacity>
-          <Ionicons name="bookmark-outline" size={22} color="black" />
+          <Ionicons
+            name="bookmark-outline"
+            size={22}
+            color={colors.onBackground}
+          />
         </TouchableOpacity>
       </View>
 
       {/* Likes */}
       <View style={styles.likesContainer}>
-        <Text style={styles.likesText}>
+        <Text style={[styles.likesText, { color: colors.onBackground }]}>
           {liked ? post.likes + 1 : post.likes} likes
         </Text>
       </View>
 
       {/* Caption */}
       <View style={styles.captionContainer}>
-        <Text style={styles.caption}>
+        <Text style={[styles.caption, { color: colors.onBackground }]}>
           <Text
             style={styles.username}
             onPress={() => onProfilePress && onProfilePress(post.username)}
@@ -117,7 +137,7 @@ const Post: React.FC<PostProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 15,
+    paddingBottom: 15,
   },
   postHeader: {
     flexDirection: "row",
